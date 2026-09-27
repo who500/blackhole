@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="Singularity Collector — захватывающий ASMR-клик-идл. Управляй чёрной дырой, поглощай сферы с тактильным звуком поп-ита и прокачивай сингулярность.">
+  <meta name="theme-color" content="#131417">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <title>Singularity Collector — ASMR Tactile Black Hole</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23131417'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%23e4d5b7'/%3E%3C/svg%3E">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- VK Bridge SDK (v3.0.2) for VK Games & OK -->
+  <script src="js/vk-bridge.min.js"></script>
+
+  <!-- PixiJS v8 Local -->
+  <script src="js/pixi.min.js"></script>
+</head>
+<body>
+  <!-- Canvas Container -->
+  <div id="game-container"></div>
+
+  <!-- HUD & UI Overlay -->
+  <div id="ui-layer">
+    <!-- Top Header Stats -->
+    <header class="top-bar">
+      <div class="stat-card matte-panel" id="card-matter">
+        <span class="stat-label" data-i18n="absorbed">ПОГЛОЩЕНО</span>
+        <div class="stat-value-group">
+          <span class="stat-number" id="matter-count">0</span>
+          <span class="stat-unit" data-i18n="spheres">сфер</span>
+        </div>
+      </div>
+
+      <div class="stat-card matte-panel primary-stat" id="card-mass">
+        <span class="stat-label" data-i18n="mass">МАССА</span>
+        <div class="stat-value-group">
+          <div class="mass-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="3" fill="currentColor"/>
+              <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-dasharray="3 3"/>
+            </svg>
+          </div>
+          <span class="stat-number" id="mass-count">0</span>
+        </div>
+      </div>
+
+      <!-- Rewarded Video Boost Button (x2 Spawn Frequency + x2 Value for 60s) -->
+      <button type="button" id="btn-boost" class="boost-btn matte-panel" data-i18n-title="tooltip_boost" title="Удвоить частоту сфер и массу на 1 минуту за просмотр рекламы" aria-label="Буст x2">
+        <span class="boost-icon-badge">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </span>
+        <span class="boost-text-group">
+          <span class="boost-tag" data-i18n="boost_tag">РЕКЛАМА</span>
+          <span class="boost-label" id="boost-status-text" data-i18n="boost_label">×2 БУСТ</span>
+        </span>
+      </button>
+
+      <!-- Quick Utility Controls -->
+      <div class="quick-controls matte-panel">
+        <button type="button" id="btn-leaderboard" class="icon-btn" data-i18n-title="tooltip_lb" data-i18n-aria="aria_lb" title="Таблица лидеров" aria-label="Рейтинг">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+            <path d="M4 22h16"/>
+            <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
+            <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
+          </svg>
+        </button>
+
+        <button type="button" id="btn-settings" class="icon-btn" data-i18n-title="tooltip_settings" data-i18n-aria="tooltip_settings" title="Настройки" aria-label="Настройки">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Dynamic Gravitational Resonance (Combo) Banner -->
+    <div id="combo-display" class="combo-pill matte-panel hidden">
+      <div class="combo-body">
+        <span class="combo-mult" id="combo-value">×2</span>
+        <div class="combo-info">
+          <span class="combo-title" data-i18n="resonance_title">ГРАВИТАЦИОННЫЙ РЕЗОНАНС</span>
+          <span class="combo-subtitle" id="combo-bonus-text">+100% к массе</span>
+        </div>
+      </div>
+      <div class="combo-burn-track">
+        <div class="combo-burn-bar" id="combo-bar"></div>
+      </div>
+    </div>
+
+    <!-- Compact Bottom Upgrades Dock -->
+    <footer class="bottom-dock">
+      <div class="dock-wrapper matte-panel">
+        <div class="upgrades-compact-grid">
+          <!-- Upgrade 1: Radius -->
+          <button type="button" class="upgrade-pill" id="upg-radius" data-upgrade="radius">
+            <span class="pill-icon">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"/>
+                <circle cx="12" cy="12" r="3" fill="currentColor"/>
+              </svg>
+            </span>
+            <span class="pill-body">
+              <span class="pill-title-line">
+                <span class="pill-name" data-i18n="upg_radius_name">Размер дыры</span>
+                <span class="pill-lvl" id="lvl-radius">ур. 1</span>
+              </span>
+              <span class="pill-details">
+                <span class="pill-stat" id="desc-radius">24px</span>
+                <span class="pill-cost-badge" id="cost-radius">20</span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Upgrade 2: Gravity -->
+          <button type="button" class="upgrade-pill" id="upg-gravity" data-upgrade="gravity">
+            <span class="pill-icon">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 14a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/>
+              </svg>
+            </span>
+            <span class="pill-body">
+              <span class="pill-title-line">
+                <span class="pill-name" data-i18n="upg_gravity_name">Сила притяжения</span>
+                <span class="pill-lvl" id="lvl-gravity">ур. 1</span>
+              </span>
+              <span class="pill-details">
+                <span class="pill-stat" id="desc-gravity">1.00x</span>
+                <span class="pill-cost-badge" id="cost-gravity">35</span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Upgrade 3: Stream -->
+          <button type="button" class="upgrade-pill" id="upg-stream" data-upgrade="stream">
+            <span class="pill-icon">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="6" r="2.5" fill="currentColor"/>
+                <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+                <circle cx="12" cy="18" r="2.5" fill="currentColor"/>
+              </svg>
+            </span>
+            <span class="pill-body">
+              <span class="pill-title-line">
+                <span class="pill-name" data-i18n="upg_stream_name">Частота сфер</span>
+                <span class="pill-lvl" id="lvl-stream">ур. 1</span>
+              </span>
+              <span class="pill-details">
+                <span class="pill-stat" id="desc-stream">1.1/с</span>
+                <span class="pill-cost-badge" id="cost-stream">45</span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Upgrade 4: Density -->
+          <button type="button" class="upgrade-pill" id="upg-density" data-upgrade="density">
+            <span class="pill-icon">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="7"/>
+                <path d="M12 8v8M8 12h8"/>
+              </svg>
+            </span>
+            <span class="pill-body">
+              <span class="pill-title-line">
+                <span class="pill-name" data-i18n="upg_density_name">Ценность сфер</span>
+                <span class="pill-lvl" id="lvl-density">ур. 1</span>
+              </span>
+              <span class="pill-details">
+                <span class="pill-stat" id="desc-density">+0%</span>
+                <span class="pill-cost-badge" id="cost-density">70</span>
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </footer>
+
+
+
+    <!-- Leaderboards Modal Dialog -->
+    <div id="leaderboard-modal" class="modal-backdrop hidden">
+      <div class="modal-card matte-panel lb-modal-card">
+        <div class="lb-header">
+          <div class="lb-title-group">
+            <div class="lb-icon-badge">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#E4D5B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                <path d="M4 22h16"/>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
+                <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
+              </svg>
+            </div>
+            <h3 class="lb-title" data-i18n="lb_title">Рейтинг сингулярностей</h3>
+          </div>
+          <button type="button" id="lb-close-btn" class="icon-btn lb-close-btn" data-i18n-aria="aria_close" aria-label="Закрыть">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- 3 Tabs Navigation -->
+        <div class="lb-tabs-nav">
+          <button type="button" class="lb-tab-btn active" data-tab="leaderboard_week" data-i18n="lb_tab_week">Неделя</button>
+          <button type="button" class="lb-tab-btn" data-tab="leaderboard_month" data-i18n="lb_tab_month">Месяц</button>
+          <button type="button" class="lb-tab-btn" data-tab="leaderboard_all_time" data-i18n="lb_tab_all">Всё время</button>
+        </div>
+
+        <!-- Personal Player Rank Card -->
+        <div class="lb-player-card matte-panel" id="lb-player-card">
+          <div class="lb-player-col">
+            <span class="lb-player-label" data-i18n="lb_your_result">ВАШ РЕЗУЛЬТАТ</span>
+            <span class="lb-player-score" id="lb-user-score">0 сфер</span>
+          </div>
+          <div class="lb-player-col text-right">
+            <span class="lb-player-label" data-i18n="lb_your_rank">МЕСТО В ТОПЕ</span>
+            <span class="lb-player-rank" id="lb-user-rank">#—</span>
+          </div>
+        </div>
+
+        <!-- Scrollable Top-10 Leaderboard List -->
+        <div class="lb-list-wrap">
+          <div class="lb-list" id="lb-list-container">
+            <div class="lb-loading" data-i18n="lb_loading">Загрузка данных...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal Dialog -->
+    <div id="settings-modal" class="modal-backdrop hidden">
+      <div class="modal-card matte-panel settings-modal-card">
+        <div class="lb-header">
+          <div class="lb-title-group">
+            <div class="lb-icon-badge">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#E4D5B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </div>
+            <h3 class="lb-title" data-i18n="settings_title">Настройки</h3>
+          </div>
+          <button type="button" id="settings-close-btn" class="icon-btn lb-close-btn" data-i18n-aria="aria_close" aria-label="Закрыть">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="settings-list">
+          <div class="settings-row">
+            <span class="settings-label" data-i18n="settings_lang">Язык (Language)</span>
+            <div class="settings-control">
+              <select id="settings-lang-select" class="matte-select">
+                <option value="en">English</option>
+                <option value="ru">Русский</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-row">
+            <span class="settings-label" data-i18n="settings_sound">Звук</span>
+            <div class="settings-control">
+              <button type="button" id="btn-sound" class="icon-btn active settings-toggle" data-i18n-aria="aria_sound" aria-label="Звук">
+                <svg id="icon-sound-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" fill-opacity="0.25"/>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+                <svg id="icon-sound-off" class="hidden" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" fill-opacity="0.25"/>
+                  <line x1="23" y1="9" x2="17" y2="15"/>
+                  <line x1="17" y1="9" x2="23" y2="15"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <span class="settings-label" data-i18n="settings_haptics">Вибрация</span>
+            <div class="settings-control">
+              <button type="button" id="btn-haptics" class="icon-btn active settings-toggle" data-i18n-aria="aria_haptics" aria-label="Вибрация">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="7" y="2" width="10" height="20" rx="3"/>
+                  <path d="M3 8v8M21 8v8"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <button type="button" id="btn-share" class="modal-btn secondary-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500;" data-i18n="settings_share">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              <span>Поделиться игрой</span>
+            </button>
+          </div>
+          <div class="settings-row">
+            <button type="button" id="btn-favorite" class="modal-btn secondary-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500;" data-i18n="settings_fav">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span>В избранное</span>
+            </button>
+          </div>
+          <div class="settings-row reset-row">
+            <button type="button" id="btn-reset" class="modal-btn danger-confirm-btn" data-i18n="settings_reset">Сбросить прогресс</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal Dialog for Reset -->
+    <div id="reset-modal" class="modal-backdrop hidden">
+      <div class="modal-card matte-panel">
+        <div class="modal-icon-wrap">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#e74c3c" stroke-width="2">
+            <path d="M12 9v4M12 17h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/>
+          </svg>
+        </div>
+        <h3 class="modal-title" data-i18n="reset_title">Сброс сингулярности</h3>
+        <p class="modal-text" data-i18n="reset_desc">Сбросить весь накопленный прогресс и массу? Это действие необратимо.</p>
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel-btn" class="modal-btn secondary-btn" data-i18n="btn_cancel">Отмена</button>
+          <button type="button" id="modal-confirm-btn" class="modal-btn danger-confirm-btn" data-i18n="btn_confirm">Да, сбросить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Initial Touch Hint Overlay (placed at body root for reliable mobile touch interception) -->
+  <div id="start-overlay" class="start-hint-overlay">
+    <div class="start-hint-card matte-panel">
+      <div class="hint-ring"></div>
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#E4D5B7" stroke-width="1.8">
+        <circle cx="12" cy="12" r="9"/>
+        <circle cx="12" cy="12" r="3" fill="#E4D5B7"/>
+      </svg>
+      <span class="start-title" data-i18n="start_title">КОСНИТЕСЬ ЭКРАНА</span>
+      <span class="start-subtitle" data-i18n="start_subtitle">Управляйте сингулярностью и собирайте керамические сферы с приятным звуком поп-ита</span>
+    </div>
+  </div>
+
+  <!-- Core Balance Constants & Game State Modules -->
+  <script src="js/i18n.js?v=21"></script>
+  <script src="js/Constants.js?v=21"></script>
+  <script src="js/State.js?v=21"></script>
+
+  <!-- Multi-Platform Services & Game Scripts (VK Games, OK) -->
+  <script src="js/PlatformManager.js?v=21"></script>
+  <script src="js/audio.js?v=21"></script>
+  <script src="js/ballTextures.js?v=21"></script>
+  <script src="js/particles.js?v=21"></script>
+  <script src="js/singularity.js?v=21"></script>
+  <script src="js/upgrades.js?v=21"></script>
+  <script src="js/ui.js?v=21"></script>
+  <script src="js/physics.js?v=21"></script>
+  <script src="js/Simulation.js?v=21"></script>
+  <script src="js/main.js?v=21"></script>
+</body>
+</html>
