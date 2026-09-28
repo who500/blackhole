@@ -282,10 +282,11 @@ window.GameUI = (function() {
 
     elBtnBoost.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (!window.YandexManager) return;
+      const mgr = window.PlatformManager || window.YandexManager;
+      if (!mgr || typeof mgr.showRewardedVideo !== 'function') return;
 
       SoundEngine.init();
-      window.YandexManager.showRewardedVideo(
+      mgr.showRewardedVideo(
         () => {
           SoundEngine.playPop(1.5, 0.25);
           if (Progression.getState().hapticsEnabled && 'vibrate' in navigator) {

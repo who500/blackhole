@@ -347,21 +347,12 @@ window.PlatformManager = (function() {
 
     if (platformType === 'vk' && window.vkBridge) {
       try {
-        let hasAd = false;
-        try {
-          const check = await window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' });
-          hasAd = !!(check && check.result);
-        } catch (checkErr) {
-          // On some platforms (e.g. OK Web / older clients), check may not be supported; attempt show directly
-          hasAd = true;
-        }
+        isPausedByAd = true;
+        pauseGameAudioAndPhysics();
 
-        if (hasAd) {
-          isPausedByAd = true;
-          pauseGameAudioAndPhysics();
-
-          await window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' });
-        }
+        console.log('[PlatformManager] Showing VK Interstitial Ad');
+        const res = await window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' });
+        console.log('[PlatformManager] VK Interstitial result:', res);
       } catch (adErr) {
         console.warn('[PlatformManager] VK Interstitial error or rejected:', adErr);
       } finally {
@@ -424,25 +415,17 @@ window.PlatformManager = (function() {
 
     if (platformType === 'vk' && window.vkBridge) {
       try {
-        let hasAd = false;
-        try {
-          const check = await window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' });
-          hasAd = !!(check && check.result);
-        } catch (checkErr) {
-          // On some platforms (e.g. OK Web / older clients), check may not be supported; attempt show directly
-          hasAd = true;
-        }
+        isPausedByAd = true;
+        pauseGameAudioAndPhysics();
 
-        if (hasAd) {
-          isPausedByAd = true;
-          pauseGameAudioAndPhysics();
+        console.log('[PlatformManager] Requesting VK Rewarded Video');
+        const result = await window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' });
+        console.log('[PlatformManager] VK Rewarded Video result:', result);
 
-          const result = await window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' });
-          if (result && result.result) {
-            rewardGiven = true;
-            activateBoost(BOOST_DURATION_SECONDS);
-            if (typeof onSuccess === 'function') onSuccess();
-          }
+        if (result && result.result) {
+          rewardGiven = true;
+          activateBoost(BOOST_DURATION_SECONDS);
+          if (typeof onSuccess === 'function') onSuccess();
         } else {
           if (window.GameUI && typeof window.GameUI.showToast === 'function') {
             window.GameUI.showToast(window.i18n ? window.i18n.t('ad_error') : 'Реклама недоступна');
@@ -450,6 +433,9 @@ window.PlatformManager = (function() {
         }
       } catch (vkAdErr) {
         console.warn('[PlatformManager] VK Rewarded Video error:', vkAdErr);
+        if (window.GameUI && typeof window.GameUI.showToast === 'function') {
+          window.GameUI.showToast(window.i18n ? window.i18n.t('ad_error') : 'Реклама недоступна');
+        }
         if (typeof onError === 'function') onError(vkAdErr);
       } finally {
         isRewardedAdShowing = false;
