@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=26">
+  <link rel="stylesheet" href="style.css?v=28">
 
   <!-- VK Bridge SDK (v3.0.2) for VK Games & OK -->
   <script src="js/vk-bridge.min.js"></script>
@@ -241,13 +241,17 @@
           </div>
         </div>
 
-        <!-- VK Native Leaderboard Action Button (visible in VK) -->
+        <!-- Platform Native Leaderboard Action Button (VK & OK) -->
         <div id="lb-vk-action-wrap" class="lb-vk-action-wrap hidden">
-          <button type="button" id="btn-show-vk-lb" class="modal-btn lb-vk-btn">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-              <path d="M12.7 17.5c-5.2 0-8.2-3.6-8.3-9.5h2.6c.1 4.3 2 6.2 3.5 6.5V8h2.5v3.7c1.5-.2 3.1-1.9 3.6-3.7h2.5c-.4 2.3-2.1 4-3.3 4.7 1.2.6 3.1 2.1 3.8 4.8h-2.8c-.6-1.9-2.1-3.3-4.1-3.5v3.5h-.0z"/>
+          <button type="button" id="btn-show-vk-lb" class="modal-btn lb-native-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+              <path d="M4 22h16"/>
+              <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
+              <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
             </svg>
-            <span data-i18n="lb_open_vk_native">Таблица рекордов ВКонтакте</span>
+            <span data-i18n="lb_open_vk_native">Таблица рекордов</span>
           </button>
         </div>
       </div>
@@ -311,15 +315,7 @@
               </button>
             </div>
           </div>
-          <div class="settings-row">
-            <button type="button" id="btn-share" class="modal-btn secondary-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500;" data-i18n="settings_share">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-              </svg>
-              <span>Поделиться игрой</span>
-            </button>
-          </div>
+
           <div class="settings-row">
             <button type="button" id="btn-favorite" class="modal-btn secondary-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500;" data-i18n="settings_fav">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
@@ -367,20 +363,20 @@
   </div>
 
   <!-- Core Balance Constants & Game State Modules -->
-  <script src="js/i18n.js?v=26"></script>
-  <script src="js/Constants.js?v=26"></script>
-  <script src="js/State.js?v=26"></script>
+  <script src="js/i18n.js?v=28"></script>
+  <script src="js/Constants.js?v=28"></script>
+  <script src="js/State.js?v=28"></script>
 
   <!-- Multi-Platform Services & Game Scripts (VK Games, OK) -->
-  <script src="js/PlatformManager.js?v=26"></script>
-  <script src="js/audio.js?v=26"></script>
-  <script src="js/ballTextures.js?v=26"></script>
-  <script src="js/particles.js?v=26"></script>
-  <script src="js/singularity.js?v=26"></script>
-  <script src="js/upgrades.js?v=26"></script>
-  <script src="js/ui.js?v=26"></script>
-  <script src="js/physics.js?v=26"></script>
-  <script src="js/Simulation.js?v=26"></script>
-  <script src="js/main.js?v=26"></script>
+  <script src="js/PlatformManager.js?v=28"></script>
+  <script src="js/audio.js?v=28"></script>
+  <script src="js/ballTextures.js?v=28"></script>
+  <script src="js/particles.js?v=28"></script>
+  <script src="js/singularity.js?v=28"></script>
+  <script src="js/upgrades.js?v=28"></script>
+  <script src="js/ui.js?v=28"></script>
+  <script src="js/physics.js?v=28"></script>
+  <script src="js/Simulation.js?v=28"></script>
+  <script src="js/main.js?v=28"></script>
 </body>
 </html>

@@ -726,8 +726,20 @@ window.PlatformManager = (function() {
   async function shareGame() {
     if (platformType === 'vk' && window.vkBridge) {
       try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const vkPlatform = urlParams.get('vk_platform') || '';
+        const isOk = vkPlatform.startsWith('ok') || window.location.href.includes('ok.ru') || (document.referrer && document.referrer.includes('ok.ru'));
+        const appId = urlParams.get('vk_app_id') || urlParams.get('api_id') || '54791091';
+        const shareLink = isOk ? `https://ok.ru/game/${appId}` : `https://vk.com/app${appId}`;
         await window.vkBridge.send('VKWebAppShare', {
-          link: window.location.href
+          link: shareLink
+        });
+      } catch (e) {}
+    } else if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Чёрная Дыра: ASMR Поглощение',
+          url: 'https://vk.com/app54791091'
         });
       } catch (e) {}
     }

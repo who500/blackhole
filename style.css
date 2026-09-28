@@ -923,25 +923,30 @@ html, body {
   margin-top: 6px;
 }
 
-.lb-vk-btn {
+.lb-vk-btn,
+.lb-native-btn {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: rgba(39, 135, 245, 0.16);
-  border: 1px solid rgba(39, 135, 245, 0.35);
-  color: #70b2ff;
+  background: rgba(228, 213, 183, 0.12);
+  border: 1px solid rgba(228, 213, 183, 0.32);
+  color: var(--accent-ivory);
   font-weight: 600;
   padding: 9px 12px;
   border-radius: 8px;
   transition: all var(--transition-fast);
+  cursor: pointer;
 }
 
 .lb-vk-btn:hover,
-.lb-vk-btn:active {
-  background: rgba(39, 135, 245, 0.28);
+.lb-vk-btn:active,
+.lb-native-btn:hover,
+.lb-native-btn:active {
+  background: rgba(228, 213, 183, 0.22);
   color: #ffffff;
+  border-color: rgba(228, 213, 183, 0.55);
 }
 
 /* Settings Modal Styles */

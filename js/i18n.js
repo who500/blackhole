@@ -45,7 +45,7 @@ window.i18n = (function() {
       lb_your_rank: 'МЕСТО В ТОПЕ',
       lb_empty: 'В этом периоде пока нет результатов.',
       lb_loading: 'Загрузка данных...',
-      lb_open_vk_native: 'Таблица рекордов ВКонтакте',
+      lb_open_vk_native: 'Таблица рекордов',
 
       upgraded: 'Улучшено: {val}!',
       reset_success: 'Прогресс сингулярности сброшен',
@@ -116,7 +116,7 @@ window.i18n = (function() {
       lb_your_rank: 'YOUR RANK',
       lb_empty: 'No results for this period yet.',
       lb_loading: 'Loading data...',
-      lb_open_vk_native: 'Open VK Leaderboard',
+      lb_open_vk_native: 'Leaderboard Rankings',
 
       upgraded: 'Upgraded: {val}!',
       reset_success: 'Singularity progress reset',

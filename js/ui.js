@@ -248,22 +248,7 @@ window.GameUI = (function() {
       });
     }
 
-    // Share & Favorites Buttons (VK Bridge & Web Share)
-    const btnShare = document.getElementById('btn-share');
-    if (btnShare) {
-      btnShare.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const mgr = window.PlatformManager || window.YandexManager;
-        if (mgr && typeof mgr.shareGame === 'function') {
-          mgr.shareGame();
-        } else if (navigator.share) {
-          navigator.share({ title: document.title, url: window.location.href }).catch(() => {});
-        } else {
-          navigator.clipboard?.writeText(window.location.href);
-          showToast('Ссылка скопирована!');
-        }
-      });
-    }
+    // Favorites Button (VK Bridge)
 
     const btnFavorite = document.getElementById('btn-favorite');
     if (btnFavorite) {
