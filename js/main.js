@@ -13,11 +13,18 @@
   document.addEventListener('gesturechange', (e) => e.preventDefault());
   document.addEventListener('gestureend', (e) => e.preventDefault());
 
-  // Prevent drag scrolling on canvas
+  // Prevent drag scrolling on canvas, while allowing native scrolling in modals & interactive UI
   document.body.addEventListener('touchmove', (e) => {
-    if (!e.target.closest('button') && !e.target.closest('.modal-content')) {
-      e.preventDefault();
+    if (
+      e.target.closest('.lb-list-wrap') ||
+      e.target.closest('.modal-card') ||
+      e.target.closest('button') ||
+      e.target.closest('select') ||
+      e.target.closest('input')
+    ) {
+      return;
     }
+    e.preventDefault();
   }, { passive: false });
 
   // 1. Initialize PixiJS v8 Application (Pure warm dark basalt background)

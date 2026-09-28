@@ -741,6 +741,27 @@ window.PlatformManager = (function() {
     }
   }
 
+  /**
+   * Show Native VK Leaderboard Box (VKWebAppShowLeaderBoardBox)
+   */
+  async function showVKLeaderboard() {
+    if (platformType === 'vk' && window.vkBridge) {
+      const userScore = (window.Progression && typeof window.Progression.getTotalMatter === 'function')
+        ? Math.floor(window.Progression.getTotalMatter())
+        : 0;
+      try {
+        console.log(`[PlatformManager] Calling VKWebAppShowLeaderBoardBox with user_result ${userScore}`);
+        const res = await window.vkBridge.send('VKWebAppShowLeaderBoardBox', {
+          user_result: userScore
+        });
+        return res;
+      } catch (err) {
+        console.warn('[PlatformManager] VKWebAppShowLeaderBoardBox error or closed:', err);
+        throw err;
+      }
+    }
+  }
+
   const publicApi = {
     init,
     startSession,
@@ -756,6 +777,7 @@ window.PlatformManager = (function() {
     loadCloudData,
     submitScore,
     getLeaderboardData,
+    showVKLeaderboard,
     shareGame,
     addToFavorites,
     getPlatform: () => platformType,

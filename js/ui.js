@@ -375,6 +375,29 @@ window.GameUI = (function() {
         });
       });
     }
+
+    const elVkWrap = document.getElementById('lb-vk-action-wrap');
+    const btnShowVkLb = document.getElementById('btn-show-vk-lb');
+    const platform = window.PlatformManager || window.YandexManager;
+    const isVk = (platform && typeof platform.getPlatform === 'function' && platform.getPlatform() === 'vk') ||
+                 (typeof window.vkBridge !== 'undefined' && !window.ysdk);
+
+    if (elVkWrap) {
+      elVkWrap.classList.toggle('hidden', !isVk);
+    }
+
+    if (btnShowVkLb) {
+      btnShowVkLb.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (platform && typeof platform.showVKLeaderboard === 'function') {
+          try {
+            await platform.showVKLeaderboard();
+          } catch (err) {
+            console.warn('[UI] VK Leaderboard error:', err);
+          }
+        }
+      });
+    }
   }
 
   const defaultAvatarSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#E4D5B7" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>`;
@@ -388,6 +411,14 @@ window.GameUI = (function() {
     currentLbTab = tabKey;
     if (!elLbListContainer) return;
     elLbListContainer.innerHTML = `<div class="lb-loading">${window.i18n ? window.i18n.t('lb_loading') : 'Loading...'}</div>`;
+
+    const elVkWrap = document.getElementById('lb-vk-action-wrap');
+    const platform = window.PlatformManager || window.YandexManager;
+    const isVk = (platform && typeof platform.getPlatform === 'function' && platform.getPlatform() === 'vk') ||
+                 (typeof window.vkBridge !== 'undefined' && !window.ysdk);
+    if (elVkWrap) {
+      elVkWrap.classList.toggle('hidden', !isVk);
+    }
 
     let data;
     if (window.YandexManager && typeof window.YandexManager.getLeaderboardData === 'function') {

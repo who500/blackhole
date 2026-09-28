@@ -907,6 +907,39 @@ html, body {
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-right: 2px;
+  touch-action: pan-y !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lb-list,
+.lb-row {
+  touch-action: pan-y;
+}
+
+.lb-vk-action-wrap {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.lb-vk-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(39, 135, 245, 0.16);
+  border: 1px solid rgba(39, 135, 245, 0.35);
+  color: #70b2ff;
+  font-weight: 600;
+  padding: 9px 12px;
+  border-radius: 8px;
+  transition: all var(--transition-fast);
+}
+
+.lb-vk-btn:hover,
+.lb-vk-btn:active {
+  background: rgba(39, 135, 245, 0.28);
+  color: #ffffff;
 }
 
 /* Settings Modal Styles */
