@@ -750,8 +750,21 @@ window.PlatformManager = (function() {
   async function addToFavorites() {
     if (platformType === 'vk' && window.vkBridge) {
       try {
-        await window.vkBridge.send('VKWebAppAddToFavorites');
-      } catch (e) {}
+        console.log('[PlatformManager] Calling VKWebAppAddToFavorites');
+        const res = await window.vkBridge.send('VKWebAppAddToFavorites');
+        console.log('[PlatformManager] VKWebAppAddToFavorites response:', res);
+        if (res && res.result) {
+          if (window.GameUI && typeof window.GameUI.showToast === 'function') {
+            window.GameUI.showToast('Добавлено в избранное! ⭐');
+          }
+        }
+      } catch (e) {
+        console.log('[PlatformManager] AddToFavorites note or cancelled:', e);
+      }
+    } else {
+      if (window.GameUI && typeof window.GameUI.showToast === 'function') {
+        window.GameUI.showToast('Нажмите Ctrl+D для добавления в закладки');
+      }
     }
   }
 

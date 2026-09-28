@@ -227,31 +227,16 @@ window.GameUI = (function() {
       });
     }
 
-    // Haptics Button in Settings
-    const btnHaptics = document.getElementById('btn-haptics');
-    if (btnHaptics) {
-      if (Progression.getState().hapticsEnabled) {
-        btnHaptics.classList.add('active');
-      }
-      btnHaptics.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const state = Progression.getState();
-        state.hapticsEnabled = !state.hapticsEnabled;
-        Progression.save();
+    // Favorites Button (VK Bridge)
+    const rowFavorite = document.getElementById('row-favorite');
+    const btnFavorite = document.getElementById('btn-favorite');
+    const urlParams = new URLSearchParams(window.location.search);
+    const isOk = (urlParams.get('vk_platform') || '').startsWith('ok') || window.location.href.includes('ok.ru') || (document.referrer && document.referrer.includes('ok.ru'));
 
-        btnHaptics.classList.toggle('active', state.hapticsEnabled);
-        if (state.hapticsEnabled) {
-          if ('vibrate' in navigator) try { navigator.vibrate(10); } catch(err) {}
-          if (window.i18n) showToast(window.i18n.t('vibro_on'));
-        } else {
-          if (window.i18n) showToast(window.i18n.t('vibro_off'));
-        }
-      });
+    if (rowFavorite && isOk) {
+      rowFavorite.style.display = 'none'; // VKWebAppAddToFavorites is unsupported in OK
     }
 
-    // Favorites Button (VK Bridge)
-
-    const btnFavorite = document.getElementById('btn-favorite');
     if (btnFavorite) {
       btnFavorite.addEventListener('click', (e) => {
         e.stopPropagation();
