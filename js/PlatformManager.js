@@ -347,8 +347,16 @@ window.PlatformManager = (function() {
 
     if (platformType === 'vk' && window.vkBridge) {
       try {
-        const check = await window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' });
-        if (check && check.result) {
+        let hasAd = false;
+        try {
+          const check = await window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' });
+          hasAd = !!(check && check.result);
+        } catch (checkErr) {
+          // On some platforms (e.g. OK Web / older clients), check may not be supported; attempt show directly
+          hasAd = true;
+        }
+
+        if (hasAd) {
           isPausedByAd = true;
           pauseGameAudioAndPhysics();
 
@@ -416,8 +424,16 @@ window.PlatformManager = (function() {
 
     if (platformType === 'vk' && window.vkBridge) {
       try {
-        const check = await window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' });
-        if (check && check.result) {
+        let hasAd = false;
+        try {
+          const check = await window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' });
+          hasAd = !!(check && check.result);
+        } catch (checkErr) {
+          // On some platforms (e.g. OK Web / older clients), check may not be supported; attempt show directly
+          hasAd = true;
+        }
+
+        if (hasAd) {
           isPausedByAd = true;
           pauseGameAudioAndPhysics();
 
