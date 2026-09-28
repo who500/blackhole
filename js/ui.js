@@ -365,6 +365,8 @@ window.GameUI = (function() {
     const elVkWrap = document.getElementById('lb-vk-action-wrap');
     const btnShowVkLb = document.getElementById('btn-show-vk-lb');
     const platform = window.PlatformManager || window.YandexManager;
+    const isVk = (platform && typeof platform.getPlatform === 'function' && platform.getPlatform() === 'vk') ||
+                 (typeof window.vkBridge !== 'undefined' && !window.ysdk);
     const urlParams = new URLSearchParams(window.location.search);
     const vkPlatform = urlParams.get('vk_platform') || '';
     const isOk = vkPlatform.startsWith('ok') || window.location.href.includes('ok.ru') || (document.referrer && document.referrer.includes('ok.ru'));
