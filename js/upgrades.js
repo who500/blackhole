@@ -44,38 +44,41 @@ window.Progression = (function() {
       name: 'Размер дыры',
       shortName: 'Размер',
       baseCost: 14,
-      calcCost: (lvl) => Math.floor(14 * Math.pow(1.23 + 0.003 * (lvl - 1), lvl - 1)),
-      calcRadius: (lvl) => 24 + (lvl - 1) * 1.5,
-      formatDesc: (lvl) => `${Math.round(24 + (lvl - 1) * 1.5)}px`
+      calcCost: (lvl) => Math.floor(14 * Math.pow(1.15, lvl - 1)),
+      calcRadius: (lvl) => Math.round(24 + 75 * (1 - Math.exp(-(lvl - 1) / 35)) + (lvl - 1) * 0.25),
+      formatDesc: (lvl) => `${Math.round(24 + 75 * (1 - Math.exp(-(lvl - 1) / 35)) + (lvl - 1) * 0.25)}px`
     },
     gravity: {
       id: 'gravity',
       name: 'Сила притяжения',
       shortName: 'Магнит',
       baseCost: 18,
-      calcCost: (lvl) => Math.floor(18 * Math.pow(1.23 + 0.003 * (lvl - 1), lvl - 1)),
+      calcCost: (lvl) => Math.floor(18 * Math.pow(1.15, lvl - 1)),
       calcStrength: (lvl) => 1.0 + (lvl - 1) * 0.10,
-      calcRange: (lvl) => 120 + (lvl - 1) * 6.5,
+      calcRange: (lvl) => 120 + 160 * (1 - Math.exp(-(lvl - 1) / 40)) + (lvl - 1) * 1.0,
       calcVortex: (lvl) => 1.0 + (lvl - 1) * 0.08,
-      formatDesc: (lvl) => `${(1.0 + (lvl - 1) * 0.10).toFixed(2)}x`
+      formatDesc: (lvl) => `${(1.0 + (lvl - 1) * 0.10).toFixed(1)}x`
     },
     stream: {
       id: 'stream',
       name: 'Частота сфер',
       shortName: 'Поток',
       baseCost: 25,
-      calcCost: (lvl) => Math.floor(25 * Math.pow(1.23 + 0.003 * (lvl - 1), lvl - 1)),
-      calcInterval: (lvl) => Math.max(0.20, 0.90 / (1 + (lvl - 1) * 0.10)),
-      formatDesc: (lvl) => `${(1 / Math.max(0.20, 0.90 / (1 + (lvl - 1) * 0.10))).toFixed(1)}/с`
+      calcCost: (lvl) => Math.floor(25 * Math.pow(1.15, lvl - 1)),
+      calcInterval: (lvl) => Math.max(0.025, 0.90 / (1 + (lvl - 1) * 0.08)),
+      formatDesc: (lvl) => `${(1 / Math.max(0.025, 0.90 / (1 + (lvl - 1) * 0.08))).toFixed(1)}${window.i18n ? window.i18n.t('per_sec') : '/с'}`
     },
     density: {
       id: 'density',
       name: 'Ценность сфер',
       shortName: 'Доход',
       baseCost: 35,
-      calcCost: (lvl) => Math.floor(35 * Math.pow(1.23 + 0.003 * (lvl - 1), lvl - 1)),
-      calcMultiplier: (lvl) => 1.0 + (lvl - 1) * 0.20,
-      formatDesc: (lvl) => `+${Math.round((lvl - 1) * 20)}%`
+      calcCost: (lvl) => Math.floor(35 * Math.pow(1.15, lvl - 1)),
+      calcMultiplier: (lvl) => Math.pow(1.15, lvl - 1),
+      formatDesc: (lvl) => {
+        const mult = Math.pow(1.15, lvl - 1);
+        return mult >= 1000 ? `${(mult / 1000).toFixed(1)}K×` : `${mult.toFixed(1)}×`;
+      }
     }
   };
 
@@ -86,8 +89,7 @@ window.Progression = (function() {
     if (typeof cfg.calcCost === 'function') {
       return cfg.calcCost(lvl);
     }
-    const rate = 1.23 + 0.003 * (lvl - 1);
-    return Math.floor(cfg.baseCost * Math.pow(rate, lvl - 1));
+    return Math.floor(cfg.baseCost * Math.pow(1.15, lvl - 1));
   }
 
   function canAfford(upgradeKey) {
@@ -112,16 +114,17 @@ window.Progression = (function() {
    */
   function addMatter(count = 1, baseMass = 1, comboMultiplier = 1) {
     const densityMult = UPGRADE_CONFIGS.density.calcMultiplier(state.upgrades.density);
-    const boostMult = (window.YandexManager && typeof window.YandexManager.isBoostActive === 'function' && window.YandexManager.isBoostActive()) ? 2 : 1;
+    const mgr = window.PlatformManager || window.YandexManager;
+    const boostMult = (mgr && typeof mgr.isBoostActive === 'function' && mgr.isBoostActive()) ? 2 : 1;
     const earnedMass = Math.max(1, Math.round(baseMass * densityMult * comboMultiplier * boostMult));
     
     state.totalMatter += count;
     state.totalAbsorbed = state.totalMatter;
     state.mass += earnedMass;
 
-    // Send score update to Yandex Leaderboards with throttling
-    if (window.YandexManager && typeof window.YandexManager.submitScore === 'function') {
-      window.YandexManager.submitScore(state.totalMatter);
+    // Send score update to Leaderboards with throttling
+    if (mgr && typeof mgr.submitScore === 'function') {
+      mgr.submitScore(state.totalMatter);
     }
 
     return earnedMass;

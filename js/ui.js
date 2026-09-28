@@ -76,7 +76,8 @@ window.GameUI = (function() {
         updateHUD();
         hideCombo(); // Refresh combo text next time it shows
         if (elBtnBoost) {
-          const active = window.YandexManager && window.YandexManager.isBoostActive();
+          const mgr = window.PlatformManager || window.YandexManager;
+          const active = mgr && typeof mgr.isBoostActive === 'function' && mgr.isBoostActive();
           if (!active) {
             elBoostStatusText.textContent = window.i18n.t('boost_label');
           }
@@ -364,11 +365,13 @@ window.GameUI = (function() {
     const elVkWrap = document.getElementById('lb-vk-action-wrap');
     const btnShowVkLb = document.getElementById('btn-show-vk-lb');
     const platform = window.PlatformManager || window.YandexManager;
-    const isVk = (platform && typeof platform.getPlatform === 'function' && platform.getPlatform() === 'vk') ||
-                 (typeof window.vkBridge !== 'undefined' && !window.ysdk);
+    const urlParams = new URLSearchParams(window.location.search);
+    const vkPlatform = urlParams.get('vk_platform') || '';
+    const isOk = vkPlatform.startsWith('ok') || window.location.href.includes('ok.ru') || (document.referrer && document.referrer.includes('ok.ru'));
 
     if (elVkWrap) {
-      elVkWrap.classList.toggle('hidden', !isVk);
+      // VKWebAppShowLeaderBoardBox is only available in VK; hide it in OK to keep UI clean and compliant
+      elVkWrap.classList.toggle('hidden', !isVk || isOk);
     }
 
     if (btnShowVkLb) {
@@ -401,8 +404,10 @@ window.GameUI = (function() {
     const platform = window.PlatformManager || window.YandexManager;
     const isVk = (platform && typeof platform.getPlatform === 'function' && platform.getPlatform() === 'vk') ||
                  (typeof window.vkBridge !== 'undefined' && !window.ysdk);
+    const urlParams = new URLSearchParams(window.location.search);
+    const isOk = (urlParams.get('vk_platform') || '').startsWith('ok') || window.location.href.includes('ok.ru') || (document.referrer && document.referrer.includes('ok.ru'));
     if (elVkWrap) {
-      elVkWrap.classList.toggle('hidden', !isVk);
+      elVkWrap.classList.toggle('hidden', !isVk || isOk);
     }
 
     let data;
@@ -494,9 +499,10 @@ window.GameUI = (function() {
     });
 
     // Update Rewarded Video Boost Button status & countdown
-    if (elBtnBoost && elBoostStatusText && window.YandexManager) {
-      const isBoost = window.YandexManager.isBoostActive();
-      const remaining = window.YandexManager.getBoostTimeRemaining();
+    const boostMgr = window.PlatformManager || window.YandexManager;
+    if (elBtnBoost && elBoostStatusText && boostMgr) {
+      const isBoost = typeof boostMgr.isBoostActive === 'function' && boostMgr.isBoostActive();
+      const remaining = typeof boostMgr.getBoostTimeRemaining === 'function' ? boostMgr.getBoostTimeRemaining() : 0;
 
       if (isBoost) {
         if (!lastBoostActive) {
@@ -610,6 +616,8 @@ window.GameUI = (function() {
   }
 
   function formatNumber(num) {
+    if (num >= 1000000000000) return (num / 1000000000000).toFixed(1) + 'T';
+    if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
     if (num >= 10000) return (num / 1000).toFixed(1) + 'K';
     return num.toLocaleString();

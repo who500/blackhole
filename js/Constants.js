@@ -7,13 +7,11 @@ window.GameConstants = (function() {
   'use strict';
 
   /**
-   * Progressive cost calculation:
-   * Starts with an accessible ~1.23x step so the first 5-7 levels can be bought in quick succession,
-   * while scaling smoothly into mid and late game (levels 15-30+) to ensure long-term retention.
+   * Progressive balanced cost calculation:
+   * Uses smooth 1.15x geometric scaling so upgrades can scale infinitely without hitches.
    */
   function calcCost(baseCost, lvl) {
-    const rate = 1.23 + 0.003 * (lvl - 1);
-    return Math.floor(baseCost * Math.pow(rate, lvl - 1));
+    return Math.floor(baseCost * Math.pow(1.15, lvl - 1));
   }
 
   return {
@@ -79,8 +77,8 @@ window.GameConstants = (function() {
         shortName: 'Размер',
         baseCost: 14,
         calcCost: (lvl) => calcCost(14, lvl),
-        calcRadius: (lvl) => 24 + (lvl - 1) * 1.5,
-        formatDesc: (lvl) => `${Math.round(24 + (lvl - 1) * 1.5)}px`
+        calcRadius: (lvl) => Math.round(24 + 75 * (1 - Math.exp(-(lvl - 1) / 35)) + (lvl - 1) * 0.25),
+        formatDesc: (lvl) => `${Math.round(24 + 75 * (1 - Math.exp(-(lvl - 1) / 35)) + (lvl - 1) * 0.25)}px`
       },
       gravity: {
         id: 'gravity',
@@ -89,9 +87,9 @@ window.GameConstants = (function() {
         baseCost: 18,
         calcCost: (lvl) => calcCost(18, lvl),
         calcStrength: (lvl) => 1.0 + (lvl - 1) * 0.10,
-        calcRange: (lvl) => 120 + (lvl - 1) * 6.5,
+        calcRange: (lvl) => 120 + 160 * (1 - Math.exp(-(lvl - 1) / 40)) + (lvl - 1) * 1.0,
         calcVortex: (lvl) => 1.0 + (lvl - 1) * 0.08,
-        formatDesc: (lvl) => `${(1.0 + (lvl - 1) * 0.10).toFixed(2)}x`
+        formatDesc: (lvl) => `${(1.0 + (lvl - 1) * 0.10).toFixed(1)}x`
       },
       stream: {
         id: 'stream',
@@ -99,8 +97,8 @@ window.GameConstants = (function() {
         shortName: 'Поток',
         baseCost: 25,
         calcCost: (lvl) => calcCost(25, lvl),
-        calcInterval: (lvl) => Math.max(0.20, 0.90 / (1 + (lvl - 1) * 0.10)),
-        formatDesc: (lvl) => `${(1 / Math.max(0.20, 0.90 / (1 + (lvl - 1) * 0.10))).toFixed(1)}${window.i18n ? window.i18n.t('per_sec') : '/s'}`
+        calcInterval: (lvl) => Math.max(0.025, 0.90 / (1 + (lvl - 1) * 0.08)),
+        formatDesc: (lvl) => `${(1 / Math.max(0.025, 0.90 / (1 + (lvl - 1) * 0.08))).toFixed(1)}${window.i18n ? window.i18n.t('per_sec') : '/s'}`
       },
       density: {
         id: 'density',
@@ -108,8 +106,11 @@ window.GameConstants = (function() {
         shortName: 'Доход',
         baseCost: 35,
         calcCost: (lvl) => calcCost(35, lvl),
-        calcMultiplier: (lvl) => 1.0 + (lvl - 1) * 0.20,
-        formatDesc: (lvl) => `+${Math.round((lvl - 1) * 20)}%`
+        calcMultiplier: (lvl) => Math.pow(1.15, lvl - 1),
+        formatDesc: (lvl) => {
+          const mult = Math.pow(1.15, lvl - 1);
+          return mult >= 1000 ? `${(mult / 1000).toFixed(1)}K×` : `${mult.toFixed(1)}×`;
+        }
       }
     }
   };

@@ -12,6 +12,7 @@ window.PhysicsEngine = (function() {
   let floorGraphics = null;
   const balls = [];
   const ballPool = [];
+  const MAX_ON_SCREEN_BALLS = 180;
   let nextBallId = 1;
   let isSimulationPaused = false;
 
@@ -662,7 +663,8 @@ window.PhysicsEngine = (function() {
     const streamLvl = Progression.getUpgradeLevel('stream');
     let interval = Progression.getConfig('stream').calcInterval(streamLvl);
 
-    const isBoost = (window.YandexManager && typeof window.YandexManager.isBoostActive === 'function' && window.YandexManager.isBoostActive());
+    const mgr = window.PlatformManager || window.YandexManager;
+    const isBoost = (mgr && typeof mgr.isBoostActive === 'function' && mgr.isBoostActive());
     if (isBoost) {
       interval *= 0.5; // Double the sphere falling frequency!
     }
@@ -670,7 +672,9 @@ window.PhysicsEngine = (function() {
     // Standard sphere spawner
     spawnTimer += dt;
     while (spawnTimer >= interval) {
-      spawnBall();
+      if (balls.length < MAX_ON_SCREEN_BALLS) {
+        spawnBall();
+      }
       spawnTimer -= interval;
     }
 
@@ -678,7 +682,9 @@ window.PhysicsEngine = (function() {
     const bubbleInterval = isBoost ? 4.0 : 7.8;
     bubbleSpawnTimer += dt;
     if (bubbleSpawnTimer >= bubbleInterval) {
-      spawnBubble();
+      if (balls.length < MAX_ON_SCREEN_BALLS) {
+        spawnBubble();
+      }
       bubbleSpawnTimer = 0;
     }
   }
