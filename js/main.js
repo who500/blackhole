@@ -13,18 +13,31 @@
   document.addEventListener('gesturechange', (e) => e.preventDefault());
   document.addEventListener('gestureend', (e) => e.preventDefault());
 
+  // Robust interactive target check (supports text nodes, SVGs, and modal containers)
+  function isInteractiveTarget(target) {
+    if (!target) return false;
+    const el = (target instanceof Element) ? target : target.parentElement;
+    if (!el || typeof el.closest !== 'function') return false;
+    return Boolean(
+      el.closest('button') ||
+      el.closest('.modal-backdrop') ||
+      el.closest('.modal-card') ||
+      el.closest('.lb-list-wrap') ||
+      el.closest('.lb-list') ||
+      el.closest('.lb-row') ||
+      el.closest('select') ||
+      el.closest('input')
+    );
+  }
+
   // Prevent drag scrolling on canvas, while allowing native scrolling in modals & interactive UI
   document.body.addEventListener('touchmove', (e) => {
-    if (
-      e.target.closest('.lb-list-wrap') ||
-      e.target.closest('.modal-card') ||
-      e.target.closest('button') ||
-      e.target.closest('select') ||
-      e.target.closest('input')
-    ) {
+    if (isInteractiveTarget(e.target)) {
       return;
     }
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+    }
   }, { passive: false });
 
   // 1. Initialize PixiJS v8 Application (Pure warm dark basalt background)
@@ -125,14 +138,6 @@
     }
   }
 
-  function isInteractiveTarget(target) {
-    if (!target) return false;
-    return Boolean(
-      target.closest('button') ||
-      target.closest('.modal-card') ||
-      target.closest('select')
-    );
-  }
 
   // Direct dismissal listeners on start-overlay
   const startOverlayEl = document.getElementById('start-overlay');

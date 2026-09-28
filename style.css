@@ -57,7 +57,6 @@ html, body {
   background-color: var(--bg-base);
   font-family: var(--font-main);
   color: var(--text-main);
-  touch-action: none;
   overscroll-behavior: none;
   -webkit-touch-callout: none;
 }
@@ -904,16 +903,19 @@ html, body {
 .lb-list-wrap {
   width: 100%;
   max-height: 250px;
-  overflow-y: auto;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
   overscroll-behavior: contain;
   padding-right: 2px;
   touch-action: pan-y !important;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch !important;
+  pointer-events: auto !important;
 }
 
 .lb-list,
 .lb-row {
-  touch-action: pan-y;
+  touch-action: pan-y !important;
+  pointer-events: auto !important;
 }
 
 .lb-vk-action-wrap {
