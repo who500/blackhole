@@ -8,10 +8,10 @@ window.GameConstants = (function() {
 
   /**
    * Progressive balanced cost calculation:
-   * Uses smooth 1.15x geometric scaling so upgrades can scale infinitely without hitches.
+   * Uses 1.16x geometric scaling so costs steadily outpace base income and prevent infinite spam loops.
    */
   function calcCost(baseCost, lvl) {
-    return Math.floor(baseCost * Math.pow(1.15, lvl - 1));
+    return Math.floor(baseCost * Math.pow(1.16, lvl - 1));
   }
 
   return {
@@ -77,8 +77,8 @@ window.GameConstants = (function() {
         shortName: 'Размер',
         baseCost: 14,
         calcCost: (lvl) => calcCost(14, lvl),
-        calcRadius: (lvl) => Math.round(24 + 75 * (1 - Math.exp(-(lvl - 1) / 35)) + (lvl - 1) * 0.25),
-        formatDesc: (lvl) => `${Math.round(24 + 75 * (1 - Math.exp(-(lvl - 1) / 35)) + (lvl - 1) * 0.25)}px`
+        calcRadius: (lvl) => Math.round(24 + 70 * (1 - Math.exp(-(lvl - 1) / 45)) + (lvl - 1) * 0.20),
+        formatDesc: (lvl) => `${Math.round(24 + 70 * (1 - Math.exp(-(lvl - 1) / 45)) + (lvl - 1) * 0.20)}px`
       },
       gravity: {
         id: 'gravity',
@@ -86,10 +86,10 @@ window.GameConstants = (function() {
         shortName: 'Магнит',
         baseCost: 18,
         calcCost: (lvl) => calcCost(18, lvl),
-        calcStrength: (lvl) => 1.0 + (lvl - 1) * 0.10,
-        calcRange: (lvl) => 120 + 160 * (1 - Math.exp(-(lvl - 1) / 40)) + (lvl - 1) * 1.0,
-        calcVortex: (lvl) => 1.0 + (lvl - 1) * 0.08,
-        formatDesc: (lvl) => `${(1.0 + (lvl - 1) * 0.10).toFixed(1)}x`
+        calcStrength: (lvl) => 1.0 + (lvl - 1) * 0.08,
+        calcRange: (lvl) => 120 + 150 * (1 - Math.exp(-(lvl - 1) / 50)) + (lvl - 1) * 0.8,
+        calcVortex: (lvl) => 1.0 + (lvl - 1) * 0.06,
+        formatDesc: (lvl) => `${(1.0 + (lvl - 1) * 0.08).toFixed(1)}x`
       },
       stream: {
         id: 'stream',
@@ -97,8 +97,8 @@ window.GameConstants = (function() {
         shortName: 'Поток',
         baseCost: 25,
         calcCost: (lvl) => calcCost(25, lvl),
-        calcInterval: (lvl) => Math.max(0.025, 0.90 / (1 + (lvl - 1) * 0.08)),
-        formatDesc: (lvl) => `${(1 / Math.max(0.025, 0.90 / (1 + (lvl - 1) * 0.08))).toFixed(1)}${window.i18n ? window.i18n.t('per_sec') : '/s'}`
+        calcInterval: (lvl) => Math.max(0.04, 0.90 / (1 + (lvl - 1) * 0.07)),
+        formatDesc: (lvl) => `${(1 / Math.max(0.04, 0.90 / (1 + (lvl - 1) * 0.07))).toFixed(1)}${window.i18n ? window.i18n.t('per_sec') : '/s'}`
       },
       density: {
         id: 'density',
@@ -106,9 +106,9 @@ window.GameConstants = (function() {
         shortName: 'Доход',
         baseCost: 35,
         calcCost: (lvl) => calcCost(35, lvl),
-        calcMultiplier: (lvl) => Math.pow(1.15, lvl - 1),
+        calcMultiplier: (lvl) => Math.pow(1.09, lvl - 1),
         formatDesc: (lvl) => {
-          const mult = Math.pow(1.15, lvl - 1);
+          const mult = Math.pow(1.09, lvl - 1);
           return mult >= 1000 ? `${(mult / 1000).toFixed(1)}K×` : `${mult.toFixed(1)}×`;
         }
       }

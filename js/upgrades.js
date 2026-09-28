@@ -44,39 +44,39 @@ window.Progression = (function() {
       name: 'Размер дыры',
       shortName: 'Размер',
       baseCost: 14,
-      calcCost: (lvl) => Math.floor(14 * Math.pow(1.15, lvl - 1)),
-      calcRadius: (lvl) => Math.round(24 + 75 * (1 - Math.exp(-(lvl - 1) / 35)) + (lvl - 1) * 0.25),
-      formatDesc: (lvl) => `${Math.round(24 + 75 * (1 - Math.exp(-(lvl - 1) / 35)) + (lvl - 1) * 0.25)}px`
+      calcCost: (lvl) => Math.floor(14 * Math.pow(1.16, lvl - 1)),
+      calcRadius: (lvl) => Math.round(24 + 70 * (1 - Math.exp(-(lvl - 1) / 45)) + (lvl - 1) * 0.20),
+      formatDesc: (lvl) => `${Math.round(24 + 70 * (1 - Math.exp(-(lvl - 1) / 45)) + (lvl - 1) * 0.20)}px`
     },
     gravity: {
       id: 'gravity',
       name: 'Сила притяжения',
       shortName: 'Магнит',
       baseCost: 18,
-      calcCost: (lvl) => Math.floor(18 * Math.pow(1.15, lvl - 1)),
-      calcStrength: (lvl) => 1.0 + (lvl - 1) * 0.10,
-      calcRange: (lvl) => 120 + 160 * (1 - Math.exp(-(lvl - 1) / 40)) + (lvl - 1) * 1.0,
-      calcVortex: (lvl) => 1.0 + (lvl - 1) * 0.08,
-      formatDesc: (lvl) => `${(1.0 + (lvl - 1) * 0.10).toFixed(1)}x`
+      calcCost: (lvl) => Math.floor(18 * Math.pow(1.16, lvl - 1)),
+      calcStrength: (lvl) => 1.0 + (lvl - 1) * 0.08,
+      calcRange: (lvl) => 120 + 150 * (1 - Math.exp(-(lvl - 1) / 50)) + (lvl - 1) * 0.8,
+      calcVortex: (lvl) => 1.0 + (lvl - 1) * 0.06,
+      formatDesc: (lvl) => `${(1.0 + (lvl - 1) * 0.08).toFixed(1)}x`
     },
     stream: {
       id: 'stream',
       name: 'Частота сфер',
       shortName: 'Поток',
       baseCost: 25,
-      calcCost: (lvl) => Math.floor(25 * Math.pow(1.15, lvl - 1)),
-      calcInterval: (lvl) => Math.max(0.025, 0.90 / (1 + (lvl - 1) * 0.08)),
-      formatDesc: (lvl) => `${(1 / Math.max(0.025, 0.90 / (1 + (lvl - 1) * 0.08))).toFixed(1)}${window.i18n ? window.i18n.t('per_sec') : '/с'}`
+      calcCost: (lvl) => Math.floor(25 * Math.pow(1.16, lvl - 1)),
+      calcInterval: (lvl) => Math.max(0.04, 0.90 / (1 + (lvl - 1) * 0.07)),
+      formatDesc: (lvl) => `${(1 / Math.max(0.04, 0.90 / (1 + (lvl - 1) * 0.07))).toFixed(1)}${window.i18n ? window.i18n.t('per_sec') : '/с'}`
     },
     density: {
       id: 'density',
       name: 'Ценность сфер',
       shortName: 'Доход',
       baseCost: 35,
-      calcCost: (lvl) => Math.floor(35 * Math.pow(1.15, lvl - 1)),
-      calcMultiplier: (lvl) => Math.pow(1.15, lvl - 1),
+      calcCost: (lvl) => Math.floor(35 * Math.pow(1.16, lvl - 1)),
+      calcMultiplier: (lvl) => Math.pow(1.09, lvl - 1),
       formatDesc: (lvl) => {
-        const mult = Math.pow(1.15, lvl - 1);
+        const mult = Math.pow(1.09, lvl - 1);
         return mult >= 1000 ? `${(mult / 1000).toFixed(1)}K×` : `${mult.toFixed(1)}×`;
       }
     }
@@ -89,7 +89,7 @@ window.Progression = (function() {
     if (typeof cfg.calcCost === 'function') {
       return cfg.calcCost(lvl);
     }
-    return Math.floor(cfg.baseCost * Math.pow(1.15, lvl - 1));
+    return Math.floor(cfg.baseCost * Math.pow(1.16, lvl - 1));
   }
 
   function canAfford(upgradeKey) {
