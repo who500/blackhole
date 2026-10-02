@@ -227,27 +227,7 @@ window.GameUI = (function() {
       });
     }
 
-    // Favorites Button (VK Bridge)
-    const rowFavorite = document.getElementById('row-favorite');
-    const btnFavorite = document.getElementById('btn-favorite');
-    const urlParams = new URLSearchParams(window.location.search);
-    const isOk = (urlParams.get('vk_platform') || '').startsWith('ok') || window.location.href.includes('ok.ru') || (document.referrer && document.referrer.includes('ok.ru'));
 
-    if (rowFavorite && isOk) {
-      rowFavorite.style.display = 'none'; // VKWebAppAddToFavorites is unsupported in OK
-    }
-
-    if (btnFavorite) {
-      btnFavorite.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const mgr = window.PlatformManager || window.YandexManager;
-        if (mgr && typeof mgr.addToFavorites === 'function') {
-          mgr.addToFavorites();
-        } else {
-          showToast('Нажмите Ctrl+D для закладки');
-        }
-      });
-    }
 
     // Reset Button in Settings (Opens Confirm Dialog)
     const btnReset = document.getElementById('btn-reset');
